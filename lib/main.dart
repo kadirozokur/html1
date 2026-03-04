@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'data/default_categories.dart';
+import 'models/category_model.dart';
 import 'models/expense.dart';
 import 'providers/expense_provider.dart';
 import 'screens/main_shell.dart';
@@ -14,6 +16,15 @@ Future<void> main() async {
 
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseAdapter());
+  Hive.registerAdapter(CategoryModelAdapter());
+
+  final categoriesBox = await Hive.openBox<CategoryModel>('categories');
+  if (categoriesBox.isEmpty) {
+    for (final category in defaultCategories) {
+      await categoriesBox.put(category.id, category);
+    }
+  }
+
   await HiveService.instance.init();
 
   runApp(const ExpenseTrackerApp());
