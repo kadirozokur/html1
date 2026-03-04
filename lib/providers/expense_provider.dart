@@ -77,5 +77,56 @@ class ExpenseProvider extends ChangeNotifier {
     if (list.length <= 10) return list;
     return list.sublist(0, 10);
   }
+
+  List<Expense> getExpensesByCategory(String categoryId) {
+    return _expenses
+        .where((expense) => expense.categoryId == categoryId)
+        .toList();
+  }
+
+  List<Expense> getExpensesByDateRange(DateTime start, DateTime end) {
+    return _expenses
+        .where(
+          (expense) =>
+              !expense.date.isBefore(start) && !expense.date.isAfter(end),
+        )
+        .toList();
+  }
+
+  List<Expense> get thisWeekExpenses {
+    final now = DateTime.now();
+    final weekday = now.weekday; // 1 = Monday, 7 = Sunday
+    final startOfWeek = DateTime(
+      now.year,
+      now.month,
+      now.day - (weekday - 1),
+    );
+    return getExpensesByDateRange(startOfWeek, now);
+  }
+
+  List<Expense> get thisMonthExpenses {
+    final now = DateTime.now();
+    final startOfMonth = DateTime(now.year, now.month, 1);
+    return getExpensesByDateRange(startOfMonth, now);
+  }
+
+  Map<String, List<Expense>> get expensesGroupedByCategory {
+    final Map<String, List<Expense>> grouped = {};
+    for (final expense in _expenses) {
+      final key = expense.categoryId ?? expense.category;
+      final list = grouped.putIfAbsent(key, () => <Expense>[]);
+      list.add(expense);
+    }
+    return grouped;
+  }
+
+  Map<String, double> get totalByCategory {
+    final Map<String, double> totals = {};
+    for (final expense in _expenses) {
+      final key = expense.categoryId ?? expense.category;
+      totals[key] = (totals[key] ?? 0) + expense.amount;
+    }
+    return totals;
+  }
 }
 
