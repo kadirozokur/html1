@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 
 import 'models/expense.dart';
 import 'providers/expense_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 import 'services/hive_service.dart';
 import 'utils/app_theme.dart';
 
@@ -41,7 +41,7 @@ class ExpenseTrackerApp extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            home: const HomeScreen(),
+            home: const MainShell(),
           );
         },
       ),
